@@ -42,6 +42,26 @@ def validate_password(password):
         return True
     return False
 
+@app.route('/verify_user', methods=['GET'])
+@jwt_required()
+def verify_user():
+    """
+    Verifica si el usuario existe mediante su correo electrónico.
+    """
+    current_user_id = get_jwt_identity()  # Obtiene el ID del usuario desde el token JWT
+    email = request.args.get('email')  # Obtiene el correo electrónico de los parámetros de la solicitud
+
+    if not email:
+        return jsonify({"error": "Se requiere el correo electrónico"}), 400
+
+    user = Usuario.query.filter_by(email=email).first()
+
+    if not user or user.id != current_user_id:
+        return jsonify({"error": "Usuario no encontrado o no autorizado"}), 404
+
+    return jsonify({"message": "Usuario verificado", "user_id": user.id}), 200
+
+
 @app.route('/register', methods=['POST'])
 def register():
     """

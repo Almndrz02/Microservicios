@@ -11,8 +11,11 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Configuración JWT
 app.config['JWT_SECRET_KEY'] = 'seguro'  # Cambia esto por una clave secreta segura
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
+app.config['JWT_HEADER_NAME'] = 'Authorization'  # Añade esta línea
+app.config['JWT_HEADER_TYPE'] = 'Bearer'  # Añade esta línea
 
 db = SQLAlchemy(app)
+jwt = JWTManager(app)
 
 #Define el modelo Car
 class Car(db.Model):
@@ -56,13 +59,19 @@ with app.app_context():
 
 import requests  # Importa la biblioteca requests
 
+#Ruta para la renta de autos
 @app.route('/rent', methods=['POST'])
 @jwt_required()
 def rent_car():
+    """
+    Función para rentar un auto.
+    Verifica si el usuario existe y si el auto tiene stock disponible.
+    """
     current_user_id = get_jwt_identity()  # Obtiene el ID del usuario desde el token JWT
     data = request.json
 
     car_id = data.get('car_id')
+    user_email = data.get('email')  # Se espera que se proporcione el correo electrónico del usuario
 
     # Verificar si el auto existe y si tiene stock disponible
     car = Car.query.get(car_id)
@@ -72,9 +81,9 @@ def rent_car():
         return jsonify({"error": "El auto no está disponible para renta"}), 409
 
     # Verificar si el usuario existe consultando el microservicio de usuarios
-    user_service_url = "http://localhost:8001/protected"  # Asegúrate de que este URL sea correcto
+    user_service_url = f"http://localhost:8001/verify_user?email={user_email}"
     headers = {
-        'Authorization': f'Bearer {request.headers.get("Authorization").split()[1]}'
+        'Authorization': request.headers.get("Authorization")
     }
     response = requests.get(user_service_url, headers=headers)
 
@@ -86,7 +95,6 @@ def rent_car():
     db.session.commit()
 
     return jsonify({"success": "Renta exitosa", "car": car.to_dict()}), 200
-
 
 # Definir las Rutas del Microservicio
 # Ruta para Crear un Nuevo Auto (POST):
