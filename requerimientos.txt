@@ -1,0 +1,5 @@
+Flask
+Flask_SQLAlchemy
+Flask_JWT_Extended
+mysql-connector-python
+requests
