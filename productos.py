@@ -9,10 +9,10 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://ser00:automa@loc
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configuración JWT
-app.config['JWT_SECRET_KEY'] = 'seguro'  # Cambia esto por una clave secreta segura
+app.config['JWT_SECRET_KEY'] = 'seguro' 
 app.config['JWT_TOKEN_LOCATION'] = ['headers']
-app.config['JWT_HEADER_NAME'] = 'Authorization'  # Añade esta línea
-app.config['JWT_HEADER_TYPE'] = 'Bearer'  # Añade esta línea
+app.config['JWT_HEADER_NAME'] = 'Authorization'  
+app.config['JWT_HEADER_TYPE'] = 'Bearer' 
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)

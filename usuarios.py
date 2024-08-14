@@ -14,7 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 # Configurar JWT
 app.config['JWT_SECRET_KEY'] = 'seguro'  
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(hours=1)
-app.config['JWT_TOKEN_LOCATION'] = ['headers']  # Añade esta línea
+app.config['JWT_TOKEN_LOCATION'] = ['headers']  
 
 db = SQLAlchemy(app)
 jwt = JWTManager(app)
